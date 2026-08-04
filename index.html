@@ -8,35 +8,24 @@
 <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
 :root{
-  --bg:#080c08;
-  --panel:#0d130d;
-  --panel2:#111911;
-  --edge:#1d2a1d;
-  --edge-lit:#2c4a2c;
-  --green:#6abf4b;
-  --green-dim:#3d7a2c;
-  --text:#e6efe4;
-  --dim:#7d917b;
-  --red:#e05252;
-  --amber:#e0a940;
-  --mono:'IBM Plex Mono',monospace;
-  --cond:'Barlow Condensed',sans-serif;
+  --bg:#080c08; --panel:#0d130d; --panel2:#111911;
+  --edge:#1d2a1d; --edge-lit:#2c4a2c;
+  --green:#6abf4b; --green-dim:#3d7a2c;
+  --text:#e6efe4; --dim:#7d917b;
+  --red:#e05252; --red-dim:#5a2020; --amber:#e0a940;
+  --mono:'IBM Plex Mono',monospace; --cond:'Barlow Condensed',sans-serif;
 }
 *{margin:0;padding:0;box-sizing:border-box}
 body{background:var(--bg);color:var(--text);font-family:'IBM Plex Sans',sans-serif;-webkit-font-smoothing:antialiased;
   background-image:linear-gradient(rgba(106,191,75,.025) 1px,transparent 1px),linear-gradient(90deg,rgba(106,191,75,.025) 1px,transparent 1px);
   background-size:44px 44px}
-
-/* corner-bracket panels (matches BOSH inventory app) */
 .panel{background:var(--panel);border:1px solid var(--edge);position:relative;padding:18px}
 .panel::before,.panel::after{content:"";position:absolute;width:14px;height:14px;border-color:var(--green);border-style:solid;opacity:.7}
 .panel::before{top:-1px;left:-1px;border-width:2px 0 0 2px}
 .panel::after{bottom:-1px;right:-1px;border-width:0 2px 2px 0}
-
 .section-label{font-family:var(--mono);font-size:10.5px;letter-spacing:2.5px;color:var(--green);text-transform:uppercase;margin:26px 0 10px;display:flex;align-items:center;gap:12px}
 .section-label::after{content:"";flex:1;height:1px;background:var(--edge-lit)}
 
-/* ===== header ===== */
 header{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px;padding:16px 28px;border-bottom:1px solid var(--edge)}
 .logo img{height:44px;display:block}
 .status-pill{display:flex;flex-direction:column;align-items:center;gap:4px}
@@ -45,7 +34,7 @@ header{display:flex;align-items:center;justify-content:space-between;flex-wrap:w
 .dot.demo{background:var(--amber);box-shadow:0 0 8px var(--amber)}
 .substatus{font-family:var(--mono);font-size:9.5px;letter-spacing:2px;color:var(--dim)}
 .clockbox{text-align:right}
-.clock{font-family:var(--mono);font-size:26px;letter-spacing:3px;color:var(--text)}
+.clock{font-family:var(--mono);font-size:26px;letter-spacing:3px}
 .dateline{font-family:var(--mono);font-size:10px;letter-spacing:2px;color:var(--dim);margin-top:2px}
 .refresh{margin-top:6px;background:transparent;border:1px solid var(--edge-lit);color:var(--dim);font-family:var(--mono);font-size:10px;letter-spacing:2px;padding:6px 14px;cursor:pointer;text-transform:uppercase}
 .refresh:hover,.refresh:focus-visible{border-color:var(--green);color:var(--green)}
@@ -53,34 +42,55 @@ header{display:flex;align-items:center;justify-content:space-between;flex-wrap:w
 
 .wrap{max-width:1440px;margin:0 auto;padding:0 28px 70px}
 
-/* ===== KPI strip ===== */
-.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:12px;margin-top:22px}
+/* ===== SINCE YESTERDAY (the hero) ===== */
+.hero{margin-top:22px;border-left:3px solid var(--green)}
+.hero.has-critical{border-left-color:var(--red)}
+.hero h2{font-family:var(--cond);font-weight:700;font-size:24px;letter-spacing:2px;text-transform:uppercase;margin-bottom:2px}
+.hero .sub{font-family:var(--mono);font-size:10px;letter-spacing:1.5px;color:var(--dim);margin-bottom:14px}
+.chg{display:flex;align-items:baseline;gap:14px;padding:11px 12px;border-top:1px solid var(--edge);flex-wrap:wrap}
+.chg:first-of-type{border-top:none}
+.chg.crit{background:rgba(224,82,82,.06);border-left:3px solid var(--red);padding-left:12px}
+.chg-name{font-family:var(--cond);font-weight:600;font-size:17px;letter-spacing:.5px;text-transform:uppercase;min-width:220px}
+.chg-name a{color:var(--text);text-decoration:none}
+.chg-name a:hover{color:var(--green)}
+.badges{display:flex;gap:8px;flex-wrap:wrap}
+.badge{font-family:var(--mono);font-size:11.5px;padding:3px 10px;border:1px solid var(--edge-lit);color:var(--dim)}
+.badge.good{color:var(--green);border-color:var(--green-dim)}
+.badge.bad{color:#ff9b9b;border-color:var(--red);background:rgba(224,82,82,.12);font-weight:500}
+.badge.shift{color:var(--amber);border-color:#6b5220}
+.allquiet{padding:26px;text-align:center}
+.allquiet .big{font-family:var(--cond);font-weight:700;font-size:26px;letter-spacing:2px;color:var(--green)}
+.allquiet .small{font-family:var(--mono);font-size:11px;color:var(--dim);margin-top:6px;letter-spacing:1px}
+
+/* ===== KPIs ===== */
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(165px,1fr));gap:12px;margin-top:14px}
 .kpi{background:var(--panel);border:1px solid var(--edge);border-left:3px solid var(--green);padding:14px 16px}
 .kpi.warn{border-left-color:var(--red)}
-.kpi .v{font-family:var(--cond);font-weight:700;font-size:34px;line-height:1;color:var(--text)}
+.kpi .v{font-family:var(--cond);font-weight:700;font-size:34px;line-height:1}
 .kpi.warn .v{color:var(--red)}
 .kpi .d{font-family:var(--mono);font-size:9.5px;letter-spacing:1.8px;color:var(--dim);text-transform:uppercase;margin-top:6px}
 .kpi .sub{font-family:var(--mono);font-size:10px;color:var(--green);margin-top:4px}
 
-/* ===== fleet charts ===== */
+/* ===== charts ===== */
 .fleet{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:14px}
-.chart-title{font-family:var(--cond);font-weight:600;font-size:17px;letter-spacing:1.5px;text-transform:uppercase;color:var(--text);margin-bottom:14px}
+.chart-title{font-family:var(--cond);font-weight:600;font-size:17px;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:14px}
 .chart-title small{font-family:var(--mono);font-size:9.5px;letter-spacing:1.5px;color:var(--dim);display:block;margin-top:3px;text-transform:none}
-
-/* star distribution rows */
-.dist-row{display:grid;grid-template-columns:44px 1fr 56px;align-items:center;gap:10px;margin-bottom:9px}
+svg text{font-family:var(--mono)}
+.dist-row{display:grid;grid-template-columns:44px 1fr 76px;align-items:center;gap:10px;margin-bottom:9px}
 .dist-lbl{font-family:var(--mono);font-size:11px;color:var(--dim);text-align:right}
 .dist-track{height:16px;background:#0a100a;border:1px solid var(--edge)}
 .dist-fill{height:100%;transition:width .7s ease}
-.dist-count{font-family:var(--mono);font-size:11px;color:var(--text)}
+.dist-count{font-family:var(--mono);font-size:11px}
+.dist-count .dlt{color:var(--red);font-weight:500}
+.dist-count .dlt.up{color:var(--green)}
 .s5{background:var(--green)} .s4{background:#8fd06f} .s3{background:var(--amber)} .s2{background:#e07b40} .s1{background:var(--red)}
 
-svg text{font-family:var(--mono)}
-
-/* ===== product grid ===== */
+/* ===== product cards ===== */
 .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(420px,1fr));gap:14px}
 .prod{background:var(--panel);border:1px solid var(--edge);position:relative;display:flex;flex-direction:column}
+.prod.crit{border-color:var(--red-dim)}
 .prod::before{content:"";position:absolute;top:-1px;left:-1px;width:14px;height:14px;border:solid var(--green);border-width:2px 0 0 2px;opacity:.7}
+.prod.crit::before{border-color:var(--red)}
 .prod-head{padding:16px 18px 12px;border-bottom:1px solid var(--edge);display:flex;justify-content:space-between;gap:12px;align-items:flex-start}
 .prod-head h2{font-family:var(--cond);font-weight:600;font-size:20px;letter-spacing:1px;text-transform:uppercase}
 .asin{font-family:var(--mono);font-size:10.5px;color:var(--dim);margin-top:4px}
@@ -89,13 +99,13 @@ svg text{font-family:var(--mono)}
 .avg-chip .n{font-family:var(--cond);font-weight:700;font-size:30px;line-height:1}
 .avg-chip .n.good{color:var(--green)} .avg-chip .n.mid{color:var(--amber)} .avg-chip .n.bad{color:var(--red)}
 .avg-chip .l{font-family:var(--mono);font-size:9px;letter-spacing:1.5px;color:var(--dim)}
-.prod-charts{display:grid;grid-template-columns:1fr 1fr;gap:0;border-bottom:1px solid var(--edge)}
+.prod-charts{display:grid;grid-template-columns:1fr 1fr;border-bottom:1px solid var(--edge)}
 .pc{padding:14px 18px}
 .pc+.pc{border-left:1px solid var(--edge)}
 .pc-lbl{font-family:var(--mono);font-size:9px;letter-spacing:1.8px;color:var(--dim);text-transform:uppercase;margin-bottom:10px}
-.mini-dist .dist-row{grid-template-columns:24px 1fr 34px;margin-bottom:6px}
+.mini-dist .dist-row{grid-template-columns:24px 1fr 70px;margin-bottom:6px}
 .mini-dist .dist-track{height:11px}
-.reviews{max-height:280px;overflow-y:auto}
+.reviews{max-height:250px;overflow-y:auto}
 .reviews::-webkit-scrollbar{width:8px}
 .reviews::-webkit-scrollbar-thumb{background:var(--edge-lit)}
 .review{padding:12px 18px;border-bottom:1px solid var(--edge)}
@@ -113,7 +123,7 @@ svg text{font-family:var(--mono)}
 .analyze:focus-visible{outline:2px solid var(--green);outline-offset:3px}
 .analyze:disabled{opacity:.5;cursor:wait}
 
-/* ===== analysis overlay ===== */
+/* ===== overlay ===== */
 .overlay{position:fixed;inset:0;background:rgba(4,8,4,.82);display:none;align-items:flex-start;justify-content:center;padding:34px 16px;overflow-y:auto;z-index:50}
 .overlay.open{display:flex}
 .apanel{background:var(--panel2);border:1px solid var(--edge-lit);max-width:900px;width:100%;position:relative}
@@ -132,16 +142,15 @@ svg text{font-family:var(--mono)}
 .acol li{font-size:13.5px;line-height:1.55;margin-bottom:9px;color:#c9d6c7}
 .ap-note{padding:12px 22px;border-top:1px solid var(--edge-lit);font-family:var(--mono);font-size:10px;letter-spacing:1px;color:var(--dim)}
 .spin{grid-column:1/-1;padding:56px;text-align:center;font-family:var(--mono);font-size:12px;letter-spacing:2px;color:var(--green)}
-
 .empty{max-width:600px;margin:80px auto;text-align:center}
 .empty h2{font-family:var(--cond);letter-spacing:2px;text-transform:uppercase;font-size:24px}
 .empty p{margin-top:10px;color:var(--dim);font-size:14px}
-
 @media (max-width:700px){
   .ap-body{grid-template-columns:1fr}
   .acol+.acol{border-left:none;border-top:1px solid var(--edge-lit)}
   .grid{grid-template-columns:1fr}
   .clock{font-size:20px}
+  .chg-name{min-width:100%}
 }
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
 </style>
@@ -162,21 +171,27 @@ svg text{font-family:var(--mono)}
 </header>
 
 <div class="wrap">
+  <div class="panel hero" id="heroPanel">
+    <h2 id="heroTitle">SINCE YESTERDAY</h2>
+    <div class="sub" id="heroSub"></div>
+    <div id="heroBody"></div>
+  </div>
+
   <div class="kpis" id="kpiStrip"></div>
 
   <div class="section-label">Fleet Overview</div>
   <div class="fleet">
     <div class="panel">
-      <div class="chart-title">Star Distribution <small>every Amazon rating · all products, live totals</small></div>
-      <div id="fleetDist"></div>
-    </div>
-    <div class="panel">
-      <div class="chart-title">Rating Trend <small>weekly average · last 8 weeks</small></div>
+      <div class="chart-title">Rating Trend <small>fleet average · daily snapshots</small></div>
       <div id="trendChart"></div>
     </div>
     <div class="panel">
-      <div class="chart-title">Review Volume <small>new reviews captured per week</small></div>
+      <div class="chart-title">New Ratings Per Day <small>day-over-day count increases</small></div>
       <div id="volumeChart"></div>
+    </div>
+    <div class="panel">
+      <div class="chart-title">Star Distribution <small>every Amazon rating · live totals</small></div>
+      <div id="fleetDist"></div>
     </div>
   </div>
 
@@ -185,7 +200,7 @@ svg text{font-family:var(--mono)}
 
   <div class="empty" id="emptyState" style="display:none">
     <h2>No products on file</h2>
-    <p>Add products to the Products tab of the Review Dashboard sheet, run the fetch, then refresh.</p>
+    <p>Add products to the Products tab, run the fetch, then refresh.</p>
   </div>
 </div>
 
@@ -202,57 +217,40 @@ svg text{font-family:var(--mono)}
 
 <script>
 /* =====================================================================
-   CONFIG — Phase 5, step 2 of the build manual:
-   Paste your Apps Script Web App URL between the quotes below.
-   While it still says PASTE_YOUR_WEB_APP_URL_HERE, this page runs on
-   built-in demo data so you can preview the full experience.
+   CONFIG: paste your Apps Script WEB APP URL between the quotes.
+   It is the long address from Deploy → Manage deployments that starts
+   with  https://script.google.com/macros/s/  and ends with  /exec
+   (NOT the dashboard's own bowilliams1.github.io address!)
    ===================================================================== */
-const SCRIPT_URL = "bowilliams1.github.io/review-dashboard";
-const DEMO = SCRIPT_URL.indexOf("PASTE_YOUR") === 0;
+const SCRIPT_URL = "PASTE_YOUR_WEB_APP_URL_HERE";
+const DEMO = SCRIPT_URL.indexOf("PASTE_YOUR") === 0 || SCRIPT_URL.indexOf("script.google.com") === -1;
 
-/* ---------- demo data with 8 weeks of history to drive the charts ---------- */
+/* ---------- demo data (14 days of history so everything renders) ---------- */
 function demoData(){
-  const names = [
-    ["BOSH Citric Acid — 5 lb","B0DEMO1111",4.7],
-    ["BOSH Sodium Bicarbonate — 10 lb","B0DEMO2222",4.3],
-    ["BOSH Magnesium Sulfate — 25 lb","B0DEMO3333",4.8]
-  ];
-  const titles5=["Best quality I've found","Exactly as described","Great bulk value","Quality supplier","Will buy again"];
-  const titles4=["Good product","Works as expected","Solid value"];
-  const titlesLow=["Bag arrived torn","Box was dented","Slow delivery this time"];
-  const texts5=["Dissolves clean, no residue. Third time ordering.","Fine powder, no clumps. Perfect for my business.","Way cheaper than retail and the quality is better.","You can tell this company actually cares. Honest weight.","Arrived early, double-sealed. Flawless."];
-  const texts4=["Works as expected. Wish the zipper was sturdier.","Good product overall, packaging could be tougher.","Does the job. Would like a larger size option."];
-  const textsLow=["Product seems fine but the bag had a small tear and powder leaked.","Box arrived pretty banged up. Contents okay but concerning.","Took longer than promised to arrive this time."];
-  const who=["Karen M.","Dale R.","T. Nguyen","J. Whitfield","Marcus B.","Ellen S.","Garden Pro","R. Castillo","BathTimeMom","D. Okafor","S. Patel","Ray T."];
-  const products=[];
-  let seed=42; const rnd=()=>{seed=(seed*16807)%2147483647;return seed/2147483647;};
-  names.forEach(([name,asin,target])=>{
-    const reviews=[];
-    for(let w=0;w<8;w++){
-      const cnt=2+Math.floor(rnd()*3);
-      for(let i=0;i<cnt;i++){
-        const r=rnd();
-        let stars = r < (target-3.6)/1.6 ? 5 : (r<0.82?4:(r<0.9?3:(r<0.96?2:1)));
-        if(target>4.6 && stars<3 && rnd()<0.6) stars=4;
-        const d=new Date(); d.setDate(d.getDate()-(7*w)-Math.floor(rnd()*7));
-        const pool = stars>=5?[titles5,texts5]:(stars===4?[titles4,texts4]:[titlesLow,textsLow]);
-        reviews.push({date:d.toISOString().slice(0,10),stars,
-          reviewer:who[Math.floor(rnd()*who.length)],
-          title:pool[0][Math.floor(rnd()*pool[0].length)],
-          text:pool[1][Math.floor(rnd()*pool[1].length)]});
-      }
+  const defs=[["BOSH Citric Acid — 5 lb","B0DEMO1111",4.7,1240,{five:980,four:160,three:52,two:22,one:26}],
+              ["BOSH Sodium Bicarbonate — 10 lb","B0DEMO2222",4.4,860,{five:590,four:150,three:60,two:28,one:32}],
+              ["BOSH Magnesium Sulfate — 25 lb","B0DEMO3333",4.8,2100,{five:1810,four:190,three:50,two:22,one:28}]];
+  let seed=7; const rnd=()=>{seed=(seed*16807)%2147483647;return seed/2147483647;};
+  const products=defs.map(([name,asin,avg,total,bd],idx)=>{
+    const history=[];
+    let t=total-40;
+    for(let d=13;d>=0;d--){
+      const dt=new Date(); dt.setDate(dt.getDate()-d);
+      t+=Math.floor(rnd()*5);
+      history.push({date:dt.toISOString().slice(0,10),rating:avg-0.05+rnd()*0.1,total:t});
     }
-    reviews.sort((a,b)=>b.date.localeCompare(a.date));
-    const avg=reviews.reduce((s,r)=>s+r.stars,0)/reviews.length;
-    products.push({name,asin,link:"https://www.amazon.com",avg:+avg.toFixed(1),reviews});
+    const delta = idx===1
+      ? {prevDate:history[12].date,total:4,five:1,four:1,three:0,two:0,one:2,ratingFrom:4.4,ratingTo:4.3,critical:2,any:true}
+      : (idx===0 ? {prevDate:history[12].date,total:3,five:3,four:0,three:0,two:0,one:0,ratingFrom:avg,ratingTo:avg,critical:0,any:true} : null);
+    return {name,asin,link:"https://www.amazon.com",avg,ratingsTotal:total,breakdown:bd,delta,history,
+      reviews:[{date:history[13].date,stars:5,reviewer:"Karen M.",title:"Best quality I've found",text:"Dissolves clean, no residue. Third time ordering."},
+               {date:history[12].date,stars:idx===1?1:5,reviewer:idx===1?"Marcus B.":"Dale R.",title:idx===1?"Bag arrived torn":"Fast shipping",text:idx===1?"Powder everywhere in the box.":"Two days early, double sealed."},
+               {date:history[11].date,stars:4,reviewer:"T. Nguyen",title:"Good product",text:"Works as expected."}]};
   });
-  return {lastSync:"TODAY 5:02 AM",products};
+  return {lastSync:"TODAY 5:02 AM",today:new Date().toISOString().slice(0,10),products};
 }
-
-const DEMO_ANALYSIS={
-  positives:["Product purity praised repeatedly — 'no residue,' 'no clumps'","Better value than retail alternatives","Strong repeat-purchase language across products","Faster-than-promised shipping mentioned often","Trusted by business buyers (soap making, agriculture)","Honest weight and fill levels called out","Dissolves quickly and completely","Perceived as a company that 'actually cares'","Consistent quality across reorders","Results visible within weeks for garden products"],
-  negatives:["Occasional bag tears causing powder leaks in transit","Resealable zippers on 5 lb bags feel flimsy","Heavy 25 lb boxes arriving dented","A few delivery-speed complaints in recent weeks","Requests for larger size options going unmet","—","—","—","—","—"]
-};
+const DEMO_ANALYSIS={positives:["Purity praised — 'no residue,' 'no clumps'","Repeat-purchase language throughout","Faster-than-promised shipping","Better value than retail","Trusted by business buyers"],
+negatives:["Bag tears causing powder leaks in transit","Flimsy resealable zippers on 5 lb bags","Heavy boxes arriving dented"]};
 
 /* ---------- helpers ---------- */
 const $=id=>document.getElementById(id);
@@ -260,135 +258,172 @@ const esc=s=>{const d=document.createElement("div");d.textContent=s??"";return d
 const starStr=n=>"★".repeat(n)+"☆".repeat(5-n);
 const starCls=n=>n>=4?"":(n===3?"mid":"low");
 const avgCls=a=>a>=4.2?"good":(a>=3.5?"mid":"bad");
+const fmtD=s=>{const[y,m,d]=s.split("-");return `${Number(m)}/${Number(d)}`;};
 
-function distCounts(reviews){const c=[0,0,0,0,0];reviews.forEach(r=>c[5-r.stars]++);return c;}
-
-function distBars(counts,mini){
+function deltaChip(n){
+  if(!n) return "";
+  const cls=n>0?"dlt up":"dlt";
+  return ` <span class="${cls}">(${n>0?"+":""}${n})</span>`;
+}
+function distBars(bd,delta){
+  const counts=[bd.five,bd.four,bd.three,bd.two,bd.one];
+  const dl=delta?[delta.five,delta.four,delta.three,delta.two,delta.one]:[0,0,0,0,0];
   const total=counts.reduce((a,b)=>a+b,0)||1;
   const cls=["s5","s4","s3","s2","s1"];
-  return counts.map((c,i)=>`
-    <div class="dist-row">
+  return counts.map((c,i)=>{
+    const isCritRise = i>=2 && dl[i]>0;
+    return `<div class="dist-row">
       <div class="dist-lbl">${5-i}★</div>
       <div class="dist-track"><div class="dist-fill ${cls[i]}" style="width:${Math.round(c/total*100)}%"></div></div>
-      <div class="dist-count">${c}</div>
-    </div>`).join("");
+      <div class="dist-count">${c.toLocaleString()}${dl[i]? ` <span class="dlt${!isCritRise&&dl[i]>0?" up":""}">(${dl[i]>0?"+":""}${dl[i]})</span>`:""}</div>
+    </div>`;}).join("");
 }
 
-function weeklyBuckets(products,weeks){
-  const now=new Date();
-  const buckets=Array.from({length:weeks},(_,i)=>{
-    const end=new Date(now);end.setDate(end.getDate()-7*i);
-    const start=new Date(end);start.setDate(start.getDate()-7);
-    return{start,end,sum:0,n:0};
-  }).reverse();
-  products.forEach(p=>(p.reviews||[]).forEach(r=>{
-    const d=new Date(r.date);
-    buckets.forEach(b=>{if(d>b.start&&d<=b.end){b.sum+=r.stars;b.n++;}});
+/* fleet time series from per-product histories */
+function fleetSeries(products){
+  const byDate={};
+  products.forEach(p=>(p.history||[]).forEach(s=>{
+    (byDate[s.date]=byDate[s.date]||{wsum:0,tsum:0}).wsum+=s.rating*s.total;
+    byDate[s.date].tsum+=s.total;
   }));
-  return buckets;
-}
-
-function trendSVG(buckets,w,h){
-  const pad={l:34,r:10,t:12,b:22};
-  const iw=w-pad.l-pad.r, ih=h-pad.t-pad.b;
-  const pts=buckets.map((b,i)=>{
-    const avg=b.n?b.sum/b.n:null;
-    return {x:pad.l+iw*(i/(buckets.length-1)),avg};
+  const dates=Object.keys(byDate).sort();
+  const avgSeries=dates.map(d=>({date:d,avg:byDate[d].tsum?byDate[d].wsum/byDate[d].tsum:null}));
+  const newByDate={};
+  products.forEach(p=>{
+    const h=(p.history||[]);
+    for(let i=1;i<h.length;i++){
+      const inc=h[i].total-h[i-1].total;
+      if(inc>0) newByDate[h[i].date]=(newByDate[h[i].date]||0)+inc;
+    }
   });
-  const y=v=>pad.t+ih*(1-(v-1)/4);
-  let path="",started=false;
-  pts.forEach(p=>{if(p.avg==null)return;path+=(started?"L":"M")+p.x.toFixed(1)+" "+y(p.avg).toFixed(1)+" ";started=true;});
-  const gridY=[1,2,3,4,5].map(v=>`<line x1="${pad.l}" y1="${y(v)}" x2="${w-pad.r}" y2="${y(v)}" stroke="#1d2a1d"/>
-    <text x="${pad.l-8}" y="${y(v)+3.5}" fill="#7d917b" font-size="9" text-anchor="end">${v}</text>`).join("");
-  const dots=pts.filter(p=>p.avg!=null).map(p=>`<circle cx="${p.x.toFixed(1)}" cy="${y(p.avg).toFixed(1)}" r="3.5" fill="#6abf4b"/>`).join("");
-  const labels=buckets.map((b,i)=>i%2===0?`<text x="${(pad.l+iw*(i/(buckets.length-1))).toFixed(1)}" y="${h-6}" fill="#7d917b" font-size="8.5" text-anchor="middle">${(b.end.getMonth()+1)}/${b.end.getDate()}</text>`:"").join("");
-  return `<svg viewBox="0 0 ${w} ${h}" width="100%" role="img" aria-label="Weekly average rating trend">
-    ${gridY}<path d="${path}" fill="none" stroke="#6abf4b" stroke-width="2.5"/>${dots}${labels}</svg>`;
+  const volSeries=dates.map(d=>({date:d,n:newByDate[d]||0}));
+  return {avgSeries:avgSeries.slice(-14),volSeries:volSeries.slice(-14)};
 }
 
-function volumeSVG(buckets,w,h){
+function lineSVG(series,w,h){
+  if(!series.length) return '<div style="font-family:var(--mono);font-size:11px;color:var(--dim)">Data builds after the first daily runs.</div>';
+  const pad={l:38,r:10,t:12,b:22};
+  const iw=w-pad.l-pad.r, ih=h-pad.t-pad.b;
+  const vals=series.filter(s=>s.avg!=null).map(s=>s.avg);
+  let lo=Math.min(...vals), hi=Math.max(...vals);
+  if(hi-lo<0.2){const m=(hi+lo)/2;lo=m-0.1;hi=m+0.1;}
+  const x=i=>pad.l+iw*(series.length===1?0.5:i/(series.length-1));
+  const y=v=>pad.t+ih*(1-(v-lo)/(hi-lo));
+  let path="",started=false;
+  series.forEach((s,i)=>{if(s.avg==null)return;path+=(started?"L":"M")+x(i).toFixed(1)+" "+y(s.avg).toFixed(1)+" ";started=true;});
+  const grid=[lo,(lo+hi)/2,hi].map(v=>`<line x1="${pad.l}" y1="${y(v)}" x2="${w-pad.r}" y2="${y(v)}" stroke="#1d2a1d"/><text x="${pad.l-6}" y="${y(v)+3.5}" fill="#7d917b" font-size="9" text-anchor="end">${v.toFixed(2)}</text>`).join("");
+  const dots=series.map((s,i)=>s.avg==null?"":`<circle cx="${x(i).toFixed(1)}" cy="${y(s.avg).toFixed(1)}" r="3.2" fill="#6abf4b"/>`).join("");
+  const labels=series.map((s,i)=>i%Math.ceil(series.length/6)===0?`<text x="${x(i).toFixed(1)}" y="${h-6}" fill="#7d917b" font-size="8.5" text-anchor="middle">${fmtD(s.date)}</text>`:"").join("");
+  return `<svg viewBox="0 0 ${w} ${h}" width="100%" role="img" aria-label="Fleet rating trend">${grid}<path d="${path}" fill="none" stroke="#6abf4b" stroke-width="2.5"/>${dots}${labels}</svg>`;
+}
+function barsSVG(series,w,h){
+  if(!series.length) return '<div style="font-family:var(--mono);font-size:11px;color:var(--dim)">Data builds after the first daily runs.</div>';
   const pad={l:30,r:10,t:12,b:22};
   const iw=w-pad.l-pad.r, ih=h-pad.t-pad.b;
-  const max=Math.max(1,...buckets.map(b=>b.n));
-  const bw=iw/buckets.length*0.62;
-  const bars=buckets.map((b,i)=>{
-    const x=pad.l+iw*(i/buckets.length)+ (iw/buckets.length-bw)/2;
-    const bh=ih*(b.n/max);
-    return `<rect x="${x.toFixed(1)}" y="${(pad.t+ih-bh).toFixed(1)}" width="${bw.toFixed(1)}" height="${bh.toFixed(1)}" fill="#3d7a2c"/>
-      <text x="${(x+bw/2).toFixed(1)}" y="${(pad.t+ih-bh-5).toFixed(1)}" fill="#6abf4b" font-size="9" text-anchor="middle">${b.n||""}</text>`;
+  const max=Math.max(1,...series.map(s=>s.n));
+  const bw=iw/series.length*0.6;
+  const bars=series.map((s,i)=>{
+    const bx=pad.l+iw*(i/series.length)+(iw/series.length-bw)/2;
+    const bh=ih*(s.n/max);
+    return `<rect x="${bx.toFixed(1)}" y="${(pad.t+ih-bh).toFixed(1)}" width="${bw.toFixed(1)}" height="${bh.toFixed(1)}" fill="#3d7a2c"/>`+
+      (s.n?`<text x="${(bx+bw/2).toFixed(1)}" y="${(pad.t+ih-bh-5).toFixed(1)}" fill="#6abf4b" font-size="9" text-anchor="middle">${s.n}</text>`:"");
   }).join("");
-  const labels=buckets.map((b,i)=>i%2===0?`<text x="${(pad.l+iw*(i/buckets.length)+iw/buckets.length/2).toFixed(1)}" y="${h-6}" fill="#7d917b" font-size="8.5" text-anchor="middle">${(b.end.getMonth()+1)}/${b.end.getDate()}</text>`:"").join("");
-  return `<svg viewBox="0 0 ${w} ${h}" width="100%" role="img" aria-label="Weekly review volume">
+  const labels=series.map((s,i)=>i%Math.ceil(series.length/6)===0?`<text x="${(pad.l+iw*(i/series.length)+iw/series.length/2).toFixed(1)}" y="${h-6}" fill="#7d917b" font-size="8.5" text-anchor="middle">${fmtD(s.date)}</text>`:"").join("");
+  return `<svg viewBox="0 0 ${w} ${h}" width="100%" role="img" aria-label="New ratings per day">
     <line x1="${pad.l}" y1="${pad.t+ih}" x2="${w-pad.r}" y2="${pad.t+ih}" stroke="#1d2a1d"/>${bars}${labels}</svg>`;
 }
-
-function sparkSVG(product,w,h){
-  const buckets=weeklyBuckets([product],8);
-  return trendSVG(buckets,w,h);
+function sparkSVG(hist,w,h){
+  const series=(hist||[]).map(s=>({date:s.date,avg:s.rating}));
+  return lineSVG(series,w,h);
 }
 
 /* ---------- render ---------- */
 function render(data){
   const products=data.products||[];
   $("subStatus").textContent="LAST SYNC: "+(data.lastSync||"—");
-  if(!products.length){$("emptyState").style.display="block";$("kpiStrip").innerHTML="";$("productGrid").innerHTML="";return;}
+  if(!products.length){$("emptyState").style.display="block";$("kpiStrip").innerHTML="";$("productGrid").innerHTML="";$("heroBody").innerHTML="";return;}
   $("emptyState").style.display="none";
 
-  const all=products.flatMap(p=>p.reviews||[]);
-  const today=new Date().toISOString().slice(0,10);
-  const weekAgo=new Date();weekAgo.setDate(weekAgo.getDate()-7);
-  const newToday=all.filter(r=>r.date===today).length;
-  const newWeek=all.filter(r=>new Date(r.date)>weekAgo).length;
-  const lowFlags=all.filter(r=>r.stars<=3).length;
-
-  // True Amazon totals when the engine provides them; archive fallback otherwise
-  const hasBd=products.some(p=>p.breakdown);
-  let fleetCounts, ratingsTotal=0, fleetAvg, fiveShare;
-  if(hasBd){
-    fleetCounts=[0,0,0,0,0];
-    products.forEach(p=>{const b=p.breakdown; if(!b) return;
-      fleetCounts[0]+=b.five; fleetCounts[1]+=b.four; fleetCounts[2]+=b.three;
-      fleetCounts[3]+=b.two;  fleetCounts[4]+=b.one;});
-    ratingsTotal=fleetCounts.reduce((a,b)=>a+b,0);
-    fleetAvg=ratingsTotal?(fleetCounts[0]*5+fleetCounts[1]*4+fleetCounts[2]*3+fleetCounts[3]*2+fleetCounts[4]*1)/ratingsTotal:0;
-    fiveShare=ratingsTotal?Math.round(fleetCounts[0]/ratingsTotal*100):0;
+  /* --- SINCE YESTERDAY hero --- */
+  const changed=products.filter(p=>p.delta&&p.delta.any);
+  const critical=changed.filter(p=>p.delta.critical>0);
+  const calm=changed.filter(p=>p.delta.critical===0);
+  const hasBaseline=products.some(p=>p.delta);
+  $("heroPanel").classList.toggle("has-critical",critical.length>0);
+  $("heroSub").textContent = hasBaseline
+    ? ("COMPARED WITH "+(changed[0]?changed[0].delta.prevDate:"THE PREVIOUS SNAPSHOT").toString().toUpperCase())
+    : "BASELINE DAY — COMPARISONS BEGIN TOMORROW";
+  if(!hasBaseline){
+    $("heroBody").innerHTML=`<div class="allquiet"><div class="big">BASELINE RECORDED</div>
+      <div class="small">Today's counts are on file. From tomorrow, anything that changes shows up right here.</div></div>`;
+  } else if(!changed.length){
+    $("heroBody").innerHTML=`<div class="allquiet"><div class="big">ALL QUIET</div>
+      <div class="small">No rating changes on any product since the last check.</div></div>`;
   } else {
-    fleetCounts=distCounts(all);
-    ratingsTotal=all.length;
-    fleetAvg=all.length?(all.reduce((s,r)=>s+r.stars,0)/all.length):0;
-    fiveShare=all.length?Math.round(all.filter(r=>r.stars===5).length/all.length*100):0;
+    const row=p=>{
+      const d=p.delta, b=[];
+      if(d.one>0)   b.push(`<span class="badge bad">+${d.one} × 1★</span>`);
+      if(d.two>0)   b.push(`<span class="badge bad">+${d.two} × 2★</span>`);
+      if(d.three>0) b.push(`<span class="badge bad">+${d.three} × 3★</span>`);
+      if(d.four>0)  b.push(`<span class="badge good">+${d.four} × 4★</span>`);
+      if(d.five>0)  b.push(`<span class="badge good">+${d.five} × 5★</span>`);
+      if(d.total>0) b.push(`<span class="badge">+${d.total} total rating${d.total===1?"":"s"}</span>`);
+      if(d.ratingFrom!==d.ratingTo) b.push(`<span class="badge shift">avg ${d.ratingFrom.toFixed(1)} → ${d.ratingTo.toFixed(1)}</span>`);
+      return `<div class="chg ${d.critical>0?"crit":""}">
+        <div class="chg-name"><a href="${esc(p.link)}" target="_blank" rel="noopener">${esc(p.name)} ↗</a></div>
+        <div class="badges">${b.join("")}</div></div>`;
+    };
+    $("heroBody").innerHTML=critical.map(row).join("")+calm.map(row).join("");
   }
 
+  /* --- KPIs --- */
+  const newToday=changed.reduce((s,p)=>s+Math.max(0,p.delta.total),0);
+  const critToday=critical.reduce((s,p)=>s+p.delta.critical,0);
+  let counts=[0,0,0,0,0], ratingsTotal=0, wsum=0;
+  products.forEach(p=>{const b=p.breakdown; if(!b) return;
+    counts[0]+=b.five;counts[1]+=b.four;counts[2]+=b.three;counts[3]+=b.two;counts[4]+=b.one;
+    ratingsTotal+=p.ratingsTotal||0; wsum+=(p.avg||0)*(p.ratingsTotal||0);});
+  const fleetAvg=ratingsTotal?wsum/ratingsTotal:0;
+  const archived=products.reduce((s,p)=>s+(p.reviews||[]).length,0);
+
   $("kpiStrip").innerHTML=`
-    <div class="kpi"><div class="v">${products.length}</div><div class="d">Products tracked</div></div>
-    <div class="kpi"><div class="v">${ratingsTotal.toLocaleString()}</div><div class="d">${hasBd?"Total Amazon ratings":"Reviews on file"}</div><div class="sub">${all.length.toLocaleString()} reviews archived</div></div>
-    <div class="kpi"><div class="v">${newWeek}</div><div class="d">New this week</div><div class="sub">+${newToday} today</div></div>
-    <div class="kpi"><div class="v">${fleetAvg.toFixed(1)}</div><div class="d">Fleet avg stars</div></div>
-    <div class="kpi"><div class="v">${fiveShare}%</div><div class="d">5-star share</div></div>
-    <div class="kpi ${lowFlags?"warn":""}"><div class="v">${lowFlags}</div><div class="d">Low-star flags</div></div>`;
+    <div class="kpi ${newToday?"":""}"><div class="v">${newToday}</div><div class="d">New ratings today</div></div>
+    <div class="kpi ${critToday?"warn":""}"><div class="v">${critToday}</div><div class="d">Critical increases</div><div class="sub">${critToday?"needs a look":"all clear"}</div></div>
+    <div class="kpi"><div class="v">${fleetAvg.toFixed(2)}</div><div class="d">Fleet avg stars</div></div>
+    <div class="kpi"><div class="v">${ratingsTotal.toLocaleString()}</div><div class="d">Total Amazon ratings</div></div>
+    <div class="kpi"><div class="v">${archived.toLocaleString()}</div><div class="d">Reviews archived</div></div>
+    <div class="kpi"><div class="v">${products.length}</div><div class="d">Products tracked</div></div>`;
 
-  $("fleetDist").innerHTML=distBars(fleetCounts);
-  const buckets=weeklyBuckets(products,8);
-  $("trendChart").innerHTML=trendSVG(buckets,420,190);
-  $("volumeChart").innerHTML=volumeSVG(buckets,420,190);
+  /* --- fleet charts --- */
+  const fs=fleetSeries(products);
+  $("trendChart").innerHTML=lineSVG(fs.avgSeries,420,190);
+  $("volumeChart").innerHTML=barsSVG(fs.volSeries,420,190);
+  $("fleetDist").innerHTML=distBars({five:counts[0],four:counts[1],three:counts[2],two:counts[3],one:counts[4]},null);
 
-  $("productGrid").innerHTML=products.map(p=>`
-    <article class="prod">
+  /* --- product cards: critical first --- */
+  const ordered=[...products].sort((a,b)=>{
+    const ca=a.delta?a.delta.critical:0, cb=b.delta?b.delta.critical:0;
+    if(cb!==ca) return cb-ca;
+    const ta=a.delta?Math.max(0,a.delta.total):0, tb=b.delta?Math.max(0,b.delta.total):0;
+    return tb-ta;
+  });
+  $("productGrid").innerHTML=ordered.map(p=>`
+    <article class="prod ${p.delta&&p.delta.critical>0?"crit":""}">
       <div class="prod-head">
         <div>
           <h2>${esc(p.name)}</h2>
           <div class="asin">ASIN ${esc(p.asin)} · <a href="${esc(p.link)}" target="_blank" rel="noopener">AMAZON ↗</a></div>
         </div>
-        <div class="avg-chip"><div class="n ${avgCls(p.avg||0)}">${(p.avg||0).toFixed(1)}</div><div class="l">AVG / 5</div></div>
+        <div class="avg-chip"><div class="n ${avgCls(p.avg||0)}">${(p.avg||0).toFixed(1)}</div><div class="l">${(p.ratingsTotal||0).toLocaleString()} RATINGS</div></div>
       </div>
       <div class="prod-charts">
-        <div class="pc mini-dist"><div class="pc-lbl">Star breakdown${p.breakdown?` · ${(p.ratingsTotal||0).toLocaleString()} ratings`:""}</div>${distBars(p.breakdown?[p.breakdown.five,p.breakdown.four,p.breakdown.three,p.breakdown.two,p.breakdown.one]:distCounts(p.reviews||[]))}</div>
-        <div class="pc"><div class="pc-lbl">8-week trend</div>${sparkSVG(p,210,120)}</div>
+        <div class="pc mini-dist"><div class="pc-lbl">Star counts · change vs prior day</div>${p.breakdown?distBars(p.breakdown,p.delta):'<div style="font-family:var(--mono);font-size:10px;color:var(--dim)">awaiting first fetch</div>'}</div>
+        <div class="pc"><div class="pc-lbl">Rating · last 30 snapshots</div>${sparkSVG(p.history,210,120)}</div>
       </div>
       <div class="reviews">
         ${(p.reviews||[]).slice(0,6).map(r=>`
           <div class="review">
-            <div class="rev-top"><span class="stars ${starCls(r.stars)}">${starStr(r.stars)}</span><span class="rev-date">${esc(r.date)}</span></div>
+            <div class="rev-top"><span class="stars ${starCls(r.stars)}">${starStr(r.stars)}</span><span class="rev-date">captured ${esc(r.date)}</span></div>
             <div class="rev-title">${esc(r.title)}</div>
             <div class="rev-text">${esc(r.text)}</div>
             <div class="rev-by">— ${esc(r.reviewer)}</div>
@@ -444,11 +479,13 @@ async function load(){
   $("statusText").textContent="LIVE DATA";
   try{
     const res=await fetch(`${SCRIPT_URL}?action=getData`);
-    render(await res.json());
+    const json=await res.json();
+    if(json.error)throw new Error(json.error);
+    render(json);
   }catch(err){
     $("emptyState").style.display="block";
     document.querySelector("#emptyState p").textContent=
-      "Couldn't reach the data engine ("+err.message+"). Check the web app URL in this file and that deployment access is set to Anyone.";
+      "Couldn't reach the data engine ("+err.message+"). The SCRIPT_URL line in this file must be the script.google.com/macros/…/exec address, and deployment access must be Anyone.";
   }
 }
 function tick(){
