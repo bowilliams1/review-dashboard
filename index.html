@@ -142,6 +142,17 @@ svg text{font-family:var(--mono)}
 .acol li{font-size:13.5px;line-height:1.55;margin-bottom:9px;color:#c9d6c7}
 .ap-note{padding:12px 22px;border-top:1px solid var(--edge-lit);font-family:var(--mono);font-size:10px;letter-spacing:1px;color:var(--dim)}
 .spin{grid-column:1/-1;padding:56px;text-align:center;font-family:var(--mono);font-size:12px;letter-spacing:2px;color:var(--green)}
+.pin-overlay{position:fixed;inset:0;background:var(--bg);display:none;align-items:center;justify-content:center;z-index:100}
+.pin-overlay.open{display:flex}
+.pin-card{background:var(--panel);border:1px solid var(--edge-lit);padding:34px 38px;text-align:center;position:relative;max-width:340px;width:90%}
+.pin-card::before{content:"";position:absolute;top:-1px;left:-1px;width:16px;height:16px;border:solid var(--green);border-width:2px 0 0 2px}
+.pin-card h2{font-family:var(--cond);font-weight:700;font-size:22px;letter-spacing:2px;text-transform:uppercase;margin-bottom:6px}
+.pin-card p{font-family:var(--mono);font-size:10px;letter-spacing:1.5px;color:var(--dim);margin-bottom:18px}
+.pin-card input{width:100%;background:#0a100a;border:1px solid var(--edge-lit);color:var(--text);font-family:var(--mono);font-size:20px;letter-spacing:6px;text-align:center;padding:12px;margin-bottom:14px}
+.pin-card input:focus{outline:2px solid var(--green);border-color:var(--green)}
+.pin-card button{width:100%;background:transparent;border:1px solid var(--green-dim);color:var(--green);font-family:var(--cond);font-weight:600;font-size:16px;letter-spacing:2.5px;text-transform:uppercase;padding:12px;cursor:pointer;min-height:48px}
+.pin-card button:hover{background:var(--green);color:#08120a}
+.pin-err{font-family:var(--mono);font-size:11px;color:var(--red);margin-top:10px;min-height:14px}
 .empty{max-width:600px;margin:80px auto;text-align:center}
 .empty h2{font-family:var(--cond);letter-spacing:2px;text-transform:uppercase;font-size:24px}
 .empty p{margin-top:10px;color:var(--dim);font-size:14px}
@@ -201,6 +212,16 @@ svg text{font-family:var(--mono)}
   <div class="empty" id="emptyState" style="display:none">
     <h2>No products on file</h2>
     <p>Add products to the Products tab, run the fetch, then refresh.</p>
+  </div>
+</div>
+
+<div class="pin-overlay" id="pinOverlay">
+  <div class="pin-card">
+    <h2>BOSH Access</h2>
+    <p>ENTER DASHBOARD PIN</p>
+    <input type="password" id="pinInput" inputmode="numeric" autocomplete="off" aria-label="Dashboard PIN">
+    <button id="pinBtn">Unlock</button>
+    <div class="pin-err" id="pinErr"></div>
   </div>
 </div>
 
@@ -454,7 +475,7 @@ async function analyze(btn){
   try{
     if(DEMO){await new Promise(r=>setTimeout(r,900));showAnalysis(name,DEMO_ANALYSIS);}
     else{
-      const res=await fetch(`${SCRIPT_URL}?action=analyze&asin=${encodeURIComponent(asin)}`);
+      const res=await fetch(`${SCRIPT_URL}?action=analyze&asin=${encodeURIComponent(asin)}${pinParam()}`);
       const json=await res.json();
       if(json.error)throw new Error(json.error);
       showAnalysis(name,json);
@@ -468,6 +489,26 @@ $("overlay").addEventListener("click",e=>{if(e.target===$("overlay"))$("overlay"
 document.addEventListener("keydown",e=>{if(e.key==="Escape")$("overlay").classList.remove("open");});
 
 /* ---------- load & clock ---------- */
+/* ---------- PIN gate (server-enforced; page just remembers it) ---------- */
+function getPin(){ try{return localStorage.getItem('bosh_review_pin')||"";}catch(e){return "";} }
+function setPin(p){ try{localStorage.setItem('bosh_review_pin',p);}catch(e){} }
+function clearPin(){ try{localStorage.removeItem('bosh_review_pin');}catch(e){} }
+function askPin(msg){
+  $("pinOverlay").classList.add("open");
+  $("pinErr").textContent=msg||"";
+  $("pinInput").value="";
+  setTimeout(()=>$("pinInput").focus(),50);
+}
+function pinParam(){ const p=getPin(); return p?`&pin=${encodeURIComponent(p)}`:""; }
+$("pinBtn").addEventListener("click",()=>{
+  const v=$("pinInput").value.trim();
+  if(!v){$("pinErr").textContent="ENTER YOUR PIN";return;}
+  setPin(v);
+  $("pinOverlay").classList.remove("open");
+  load();
+});
+$("pinInput").addEventListener("keydown",e=>{if(e.key==="Enter")$("pinBtn").click();});
+
 async function load(){
   if(DEMO){
     $("statusDot").classList.add("demo");
@@ -478,9 +519,17 @@ async function load(){
   $("statusDot").classList.remove("demo");
   $("statusText").textContent="LIVE DATA";
   try{
-    const res=await fetch(`${SCRIPT_URL}?action=getData`);
+    const res=await fetch(`${SCRIPT_URL}?action=getData${pinParam()}`);
     const json=await res.json();
-    if(json.error)throw new Error(json.error);
+    if(json.error){
+      if(String(json.error).indexOf("PIN")>=0){
+        const hadPin = pinParam() !== "";
+        clearPin();
+        askPin(hadPin ? "WRONG PIN — TRY AGAIN" : "");
+        return;
+      }
+      throw new Error(json.error);
+    }
     render(json);
   }catch(err){
     $("emptyState").style.display="block";
