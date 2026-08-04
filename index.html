@@ -475,7 +475,7 @@ async function analyze(btn){
   try{
     if(DEMO){await new Promise(r=>setTimeout(r,900));showAnalysis(name,DEMO_ANALYSIS);}
     else{
-      const res=await fetch(`${SCRIPT_URL}?action=analyze&asin=${encodeURIComponent(asin)}${pinParam()}`);
+      const res=await postEngine_({action:"analyze",asin});
       const json=await res.json();
       if(json.error)throw new Error(json.error);
       showAnalysis(name,json);
@@ -499,7 +499,16 @@ function askPin(msg){
   $("pinInput").value="";
   setTimeout(()=>$("pinInput").focus(),50);
 }
-function pinParam(){ const p=getPin(); return p?`&pin=${encodeURIComponent(p)}`:""; }
+/* POST to the engine with the PIN in the request body, not the URL, so it
+   never ends up in browser history or an address bar. text/plain avoids a
+   CORS preflight that Apps Script web apps don't handle. */
+function postEngine_(body){
+  return fetch(SCRIPT_URL,{
+    method:"POST",
+    headers:{"Content-Type":"text/plain;charset=utf-8"},
+    body:JSON.stringify(Object.assign({},body,{pin:getPin()}))
+  });
+}
 $("pinBtn").addEventListener("click",()=>{
   const v=$("pinInput").value.trim();
   if(!v){$("pinErr").textContent="ENTER YOUR PIN";return;}
@@ -519,11 +528,11 @@ async function load(){
   $("statusDot").classList.remove("demo");
   $("statusText").textContent="LIVE DATA";
   try{
-    const res=await fetch(`${SCRIPT_URL}?action=getData${pinParam()}`);
+    const hadPin = getPin() !== "";
+    const res=await postEngine_({action:"getData"});
     const json=await res.json();
     if(json.error){
       if(String(json.error).indexOf("PIN")>=0){
-        const hadPin = pinParam() !== "";
         clearPin();
         askPin(hadPin ? "WRONG PIN — TRY AGAIN" : "");
         return;
