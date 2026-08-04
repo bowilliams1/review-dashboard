@@ -167,7 +167,7 @@ svg text{font-family:var(--mono)}
   <div class="section-label">Fleet Overview</div>
   <div class="fleet">
     <div class="panel">
-      <div class="chart-title">Star Distribution <small>all products · all reviews on file</small></div>
+      <div class="chart-title">Star Distribution <small>every Amazon rating · all products, live totals</small></div>
       <div id="fleetDist"></div>
     </div>
     <div class="panel">
@@ -207,7 +207,7 @@ svg text{font-family:var(--mono)}
    While it still says PASTE_YOUR_WEB_APP_URL_HERE, this page runs on
    built-in demo data so you can preview the full experience.
    ===================================================================== */
-const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbygAxM2ddSzosCbR0vjtNh9QcP4YSr5a4iorMQpj7nWWvWuNohOgZJ8A9hpbXw9BQNz/exec";
+const SCRIPT_URL = "bowilliams1.github.io/review-dashboard";
 const DEMO = SCRIPT_URL.indexOf("PASTE_YOUR") === 0;
 
 /* ---------- demo data with 8 weeks of history to drive the charts ---------- */
@@ -340,18 +340,34 @@ function render(data){
   const newToday=all.filter(r=>r.date===today).length;
   const newWeek=all.filter(r=>new Date(r.date)>weekAgo).length;
   const lowFlags=all.filter(r=>r.stars<=3).length;
-  const fleetAvg=all.length?(all.reduce((s,r)=>s+r.stars,0)/all.length):0;
-  const fiveShare=all.length?Math.round(all.filter(r=>r.stars===5).length/all.length*100):0;
+
+  // True Amazon totals when the engine provides them; archive fallback otherwise
+  const hasBd=products.some(p=>p.breakdown);
+  let fleetCounts, ratingsTotal=0, fleetAvg, fiveShare;
+  if(hasBd){
+    fleetCounts=[0,0,0,0,0];
+    products.forEach(p=>{const b=p.breakdown; if(!b) return;
+      fleetCounts[0]+=b.five; fleetCounts[1]+=b.four; fleetCounts[2]+=b.three;
+      fleetCounts[3]+=b.two;  fleetCounts[4]+=b.one;});
+    ratingsTotal=fleetCounts.reduce((a,b)=>a+b,0);
+    fleetAvg=ratingsTotal?(fleetCounts[0]*5+fleetCounts[1]*4+fleetCounts[2]*3+fleetCounts[3]*2+fleetCounts[4]*1)/ratingsTotal:0;
+    fiveShare=ratingsTotal?Math.round(fleetCounts[0]/ratingsTotal*100):0;
+  } else {
+    fleetCounts=distCounts(all);
+    ratingsTotal=all.length;
+    fleetAvg=all.length?(all.reduce((s,r)=>s+r.stars,0)/all.length):0;
+    fiveShare=all.length?Math.round(all.filter(r=>r.stars===5).length/all.length*100):0;
+  }
 
   $("kpiStrip").innerHTML=`
     <div class="kpi"><div class="v">${products.length}</div><div class="d">Products tracked</div></div>
-    <div class="kpi"><div class="v">${all.length}</div><div class="d">Reviews on file</div><div class="sub">+${newToday} today</div></div>
-    <div class="kpi"><div class="v">${newWeek}</div><div class="d">New this week</div></div>
+    <div class="kpi"><div class="v">${ratingsTotal.toLocaleString()}</div><div class="d">${hasBd?"Total Amazon ratings":"Reviews on file"}</div><div class="sub">${all.length.toLocaleString()} reviews archived</div></div>
+    <div class="kpi"><div class="v">${newWeek}</div><div class="d">New this week</div><div class="sub">+${newToday} today</div></div>
     <div class="kpi"><div class="v">${fleetAvg.toFixed(1)}</div><div class="d">Fleet avg stars</div></div>
     <div class="kpi"><div class="v">${fiveShare}%</div><div class="d">5-star share</div></div>
     <div class="kpi ${lowFlags?"warn":""}"><div class="v">${lowFlags}</div><div class="d">Low-star flags</div></div>`;
 
-  $("fleetDist").innerHTML=distBars(distCounts(all));
+  $("fleetDist").innerHTML=distBars(fleetCounts);
   const buckets=weeklyBuckets(products,8);
   $("trendChart").innerHTML=trendSVG(buckets,420,190);
   $("volumeChart").innerHTML=volumeSVG(buckets,420,190);
@@ -366,7 +382,7 @@ function render(data){
         <div class="avg-chip"><div class="n ${avgCls(p.avg||0)}">${(p.avg||0).toFixed(1)}</div><div class="l">AVG / 5</div></div>
       </div>
       <div class="prod-charts">
-        <div class="pc mini-dist"><div class="pc-lbl">Star breakdown</div>${distBars(distCounts(p.reviews||[]))}</div>
+        <div class="pc mini-dist"><div class="pc-lbl">Star breakdown${p.breakdown?` · ${(p.ratingsTotal||0).toLocaleString()} ratings`:""}</div>${distBars(p.breakdown?[p.breakdown.five,p.breakdown.four,p.breakdown.three,p.breakdown.two,p.breakdown.one]:distCounts(p.reviews||[]))}</div>
         <div class="pc"><div class="pc-lbl">8-week trend</div>${sparkSVG(p,210,120)}</div>
       </div>
       <div class="reviews">
